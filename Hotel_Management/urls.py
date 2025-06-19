@@ -1,5 +1,5 @@
 """
-URL configuration for Hotel_Management project.
+URL configuration for hotel_management project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -21,5 +21,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hotel/',include('hotel.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('accounts/',include('user_auth.urls')),
+    path('hotels/',include('hotel_rooms.urls')),
+    path('bookings/',include('booking_payments.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

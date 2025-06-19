@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+    body { font-family: 'Montserrat', Arial, sans-serif; background: #f6f8fc; }
+    .hotel-hero {
+        background: linear-gradient(90deg, #4f8cff 0%, #a684fa 100%);
+        color: #fff;
+        border-radius: 24px;
+        box-shadow: 0 4px 32px rgba(60,72,88,0.10);
+        padding: 40px 36px 24px 36px;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    .hotel-hero-img {
+        max-height: 340px;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(80,80,160,0.10);
+        object-fit: cover;
+        width: 100%;
+    }
+    .sticky-info-card {
+        position: sticky;
+        top: 32px;
+        z-index: 10;
+    }
+    .facility-icon {
+        font-size: 1.25em;
+        margin-right: 6px;
+        color: #4f8cff;
+        vertical-align: middle;
+    }
+    .facility-label {
+        font-size: 0.97em;
+        color: #444;
+        margin-right: 12px;
+        vertical-align: middle;
+    }
+    .review-summary {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(60,72,88,0.07);
+        padding: 18px 22px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+    .review-summary .star {
+        color: #fbbf24;
+        font-size: 2.1em;
+        margin-right: 6px;
+    }
+    .review-summary .count {
+        color: #6366f1;
+        font-weight: 600;
+        font-size: 1.1em;
+    }
+    .room-card {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(60,72,88,0.10);
+        transition: box-shadow 0.18s;
+        margin-bottom: 24px;
+        border: none;
+    }
+    .room-card:hover {
+        box-shadow: 0 8px 32px rgba(60,72,88,0.18);
+    }
+    .room-img {
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+    }
+    .badge-facility {
+        background: #e0e7ff;
+        color: #3730a3;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.95em;
+        margin-right: 4px;
+        margin-bottom: 2px;
+        display: inline-block;
+    }
+    .review-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(60,72,88,0.07);
+        padding: 14px 18px;
+        margin-bottom: 16px;
+    }
+    .review-card .star {
+        color: #fbbf24;
+        font-size: 1.15em;
+    }
+    .hotel-meta {
+        font-size: 0.99em;
+        color: #6366f1;
+        margin-bottom: 6px;
+    }
+    .hotel-meta .bi { margin-right: 3px; }
+    .hotel-actions .btn {
+        margin-right: 8px;
+        margin-bottom: 6px;
+    }
+</style>
+
+<div class="container my-5">
+  <!-- Hotel Hero Section -->
+  <div class="hotel-hero row align-items-center mb-5">
+    <div class="col-md-6 mb-3 mb-md-0">
+      <img src="{{ hotel.hotel_image.url }}" class="hotel-hero-img" alt="{{ hotel.name }}">
+    </div>
+    <div class="col-md-6">
+      <h2 class="fw-bold mb-2">{{ hotel.name }}</h2>
+      <div class="hotel-meta mb-2">
+        <i class="bi bi-geo-alt"></i> {{ hotel.get_location_display }} |
+        <i class="bi bi-person-badge"></i> Manager: {{ hotel.manager.get_full_name|default:hotel.manager.username }}
+      </div>
+      <div class="mb-2">
+        <span class="badge bg-success fs-6">Rating: {{ hotel.average_rating }}/5</span>
+        <span class="badge bg-light text-dark fs-6 ms-2">{{ hotel.total_reviews }} reviews</span>
+      </div>
+      <p class="mb-2">{{ hotel.address }}</p>
+      <div class="mb-2">
+        <i class="bi bi-calendar"></i>
+        <small>Created: {{ hotel.created_at|date:"M d, Y" }}</small>
+        <span class="ms-2">| Updated: {{ hotel.updated_at|date:"M d, Y" }}</span>
+      </div>
+      <div class="mb-3">
+        {% for facility in hotel.facilities.all|slice:":6" %}
+          {% if facility.facilities == 'wifi' %}
+              <i class="bi bi-wifi facility-icon"></i>
+          {% elif facility.facilities == 'pool' %}
+              <i class="bi bi-droplet-half facility-icon"></i>
+          {% elif facility.facilities == 'gym' %}
+              <i class="bi bi-barbell facility-icon"></i>
+          {% elif facility.facilities == 'parking' %}
+              <i class="bi bi-car-front facility-icon"></i>
+          {% elif facility.facilities == 'ac' %}
+              <i class="bi bi-snow facility-icon"></i>
+          {% elif facility.facilities == 'laundry' %}
+              <i class="bi bi-basket facility-icon"></i>
+          {% elif facility.facilities == 'restaurant' %}
+              <i class="bi bi-cup-straw facility-icon"></i>
+          {% elif facility.facilities == 'bar' %}
+              <i class="bi bi-cup-straw facility-icon"></i>
+          {% elif facility.facilities == 'spa' %}
+              <i class="bi bi-flower2 facility-icon"></i>
+          {% elif facility.facilities == 'pet_friendly' %}
+              <i class="bi bi-paw facility-icon"></i>
+          {% elif facility.facilities == 'kids_play_area' %}
+              <i class="bi bi-emoji-smile facility-icon"></i>
+          {% elif facility.facilities == 'game_room' %}
+              <i class="bi bi-controller facility-icon"></i>
+          {% elif facility.facilities == 'meeting_room' %}
+              <i class="bi bi-people facility-icon"></i>
+          {% endif %}
+          <span class="facility-label">{{ facility.get_facilities_display }}</span>
+        {% empty %}
+          <span class="text-muted">No facilities listed.</span>
+        {% endfor %}
+        {% if hotel.facilities.count > 6 %}
+          <span class="badge bg-secondary">+{{ hotel.facilities.count|add:"-6" }} more</span>
+        {% endif %}
+      </div>
+      <div class="hotel-actions mt-3">
+        {% if request.user.user_type == 'manager' %}
+          <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#updateHotelModal">
+            <i class="bi bi-pencil-square"></i> Update Hotel
+          </button>
+          <a class="btn btn-danger btn-md" href="{% url 'hotel_delete' hotel.id %}">
+            <i class="bi bi-trash"></i> Delete Hotel
+          </a>
+          <a class="btn btn-success btn-md" href="{% url 'room_create' hotel.id %}">
+            <i class="bi bi-plus-circle"></i> Add Room
+          </a>
+        {% endif %}
+        
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <!-- Modal for Updating Hotel -->
+  {% if request.user.user_type == 'manager' %}
+  <div class="modal fade" id="updateHotelModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="updateHotelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateHotelModalLabel">Update Hotel</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg mt-3">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Review Summary -->
+  <div class="review-summary">
+    <div>
+      <span class="star"><i class="bi bi-star-fill"></i></span>
+      <span class="fs-3">{{ hotel.average_rating }}</span>
+      <span class="count">/ 5</span>
+    </div>
+    <div>
+      <span class="fw-bold">{{ hotel.total_reviews }}</span> <span class="text-muted">reviews</span>
+    </div>
+    <div>
+      <span class="fw-bold">{{ hotel.room.count }}</span> <span class="text-muted">rooms</span>
+    </div>
+  </div>
+
+  <!-- Rooms Section -->
+  <div class="mb-5">
+    <h4 class="mb-3">Available Rooms</h4>
+    <div class="row g-4">
+      {% for room in hotel.room.all %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card room-card h-100">
+          {% if room.room_image.all %}
+          <img src="{{ room.room_image.all.0.image.url }}" class="card-img-top room-img" alt="Room Image">
+          {% else %}
+          <img src="https://via.placeholder.com/400x250?text=No+Image" class="card-img-top room-img" alt="No Image">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ room.room_number }} ({{ room.get_room_type_display }})</h5>
+            <p class="card-text">Price: <span class="fw-bold text-primary">₹{{ room.price }}</span></p>
+            <p>
+              
+                
+              </span>
+            </p>
+            {% if request.user.user_type == 'manager' %}
+            <div>
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'room_update' room.id %}">
+                <i class="bi bi-pencil-square"></i> Update
+              </a>
+              <a class="btn btn-outline-danger btn-sm" href="{% url 'room_delete' room.id %}">
+                <i class="bi bi-trash"></i> Delete
+              </a>
+
+              
+              <div class="mt-1"></div>
+              
+            </div>
+            {% endif %}
+
+
+            {% if room.is_booked %}
+            <a href="{% url 'book_room' hotel_id=hotel.id room_id=room.id %}" class="btn btn-success">Book Now</a>
+        {% else %}
+            {% with active_booking=room.booking_set.last %}
+                {% if not active_booking or active_booking is None %}
+                    <a href="{% url 'book_room' hotel_id=hotel.id room_id=room.id %}" class="btn btn-success">Book Now</a>
+                {% else %}
+                    <span class="btn btn-danger disabled">Booked</span>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+          
+                
+                 
+                 
+                
+             
+          
+        
+
+
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-warning">No rooms available.</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div>
+  <h2>{{ hotel.name }}</h2>
+  <h4 class="mb-3">Reviews</h4>
+    {% for review in hotel.review.all %}
+    <div class="review-card">
+      <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> {{ review.star_rating }}</span>
+
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <strong>{{ review.user.username }}</strong>
+
+      {% if review.user == user %}
+      
+        <div>
+
+          <a href="{% url 'review_update' review.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <a href="{% url 'review_delete' review.id %}" class="btn btn-sm btn-outline-primary">Delete</a>
+
+        </div>
+        {% endif %}
+
+
+      </div>
+      <p class="mb-1">{{ review.comment }}</p> 
+
+      <small class="text-muted">{{ review.date|date:"F j, Y, g:i a" }}</small>
+    </div>
+    {% empty %}
+    <div class="alert alert-info">No reviews yet.</div>
+    {% endfor %}
+    <h4>Add a Review</h4>
+    <form method="post" action="{% url 'add_review' hotel.id %}">
+        {% csrf_token %}
+        {{ review_form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+{% endblock %}
