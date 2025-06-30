@@ -198,10 +198,7 @@
                     <div class="hotel-overlay">
                         <div class="hotel-title">{{ hotel.name }}</div>
                         <div class="hotel-location"><i class="bi bi-geo-alt"></i> {{ hotel.get_location_display }}</div>
-                        <div>
-                            <span class="hotel-rating"><i class="bi bi-star-fill"></i> {{ hotel.average_rating }}</span>
-                            <span class="hotel-reviews">({{ hotel.total_reviews }} reviews)</span>
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="hotel-body">
@@ -216,7 +213,7 @@
                     </div>
                     <div class="room-list mb-2">
                         <strong>Rooms:</strong>
-                        {% for room in hotel.room.all|slice:":2" %}
+                        {% for room in hotel.hotel_rooms.all|slice:":2" %}
                         <div class="room-badge">
                             {{ room.room_number }} - {{ room.get_room_type_display }} - ₹{{ room.price }}
                             {% if not room.is_booked %}

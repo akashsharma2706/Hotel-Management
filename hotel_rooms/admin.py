@@ -1,19 +1,30 @@
 from django.contrib import admin
-from user_auth.models import User
 from .models import Hotel,Room, Review, Image, Facilities
 
-admin.site.register(Room)
-admin.site.register(Review)
+
+class hotelAdmin(admin.ModelAdmin):
+  list_display = ("name",)
+  list_filter = ['name']
+
+
+class RoomAdmin(admin.ModelAdmin):
+  list_display = ("room_number",)
+  list_filter = ['room_type']
+
+
+class ReviewAdmin(admin.ModelAdmin):
+   list_display = ("comment",)
+   list_filter = ['star_rating']
+
+
+admin.site.register(Hotel, hotelAdmin)
+admin.site.register(Room, RoomAdmin)
+admin.site.register(Review, ReviewAdmin)
 admin.site.register(Image)
 admin.site.register(Facilities)
 
 
-class HotelsAdmin(admin.ModelAdmin):   
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "manager":
-            kwargs["queryset"] = User.objects.filter(user_type__in=['manager'])
-            # print(">>>>>>>>>>", len(kwargs["queryset"]))
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-    
 
-admin.site.register(Hotel, HotelsAdmin)
+
+
+

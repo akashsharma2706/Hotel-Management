@@ -44,7 +44,7 @@
             <button class="btn btn-link" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
                     aria-controls="collapse{{ forloop.counter }}">
-              Booking for {{ booking.hotel }}
+              Booking for {{ booking.room.hotel }}
             </button>
           </h5>
         </div>
@@ -54,7 +54,7 @@
           <div class="card-body">
             <ul class="list-unstyled">
               <li><strong>User:</strong> {{ booking.user }}</li>
-              <li><strong>Hotel:</strong> {{ booking.hotel }}</li>
+              <li><strong>Hotel:</strong> {{ booking.room.hotel }}</li>
               <li><strong>Booking Mode:</strong> {{ booking.booking_mode }}</li>
               <li><strong>Room no.:</strong> {{ booking.room }}</li>
               <li><strong>Check-in Date:</strong> {{ booking.check_in }}</li>
