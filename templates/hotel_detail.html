@@ -118,8 +118,9 @@
         <i class="bi bi-person-badge"></i> Manager: {{ hotel.manager.get_full_name|default:hotel.manager.username }}
       </div>
       <div class="mb-2">  
-    <span class="badge bg-success fs-6">Rating:5</span>
-        <span class="badge bg-light text-dark fs-6 ms-2"> reviews</span>
+
+        <span class="badge bg-success fs-6">Rating: {{ avg_rating|floatformat:1 }}/5</span>
+    
       </div>
 
 
@@ -227,7 +228,7 @@
           <img src="https://via.placeholder.com/400x250?text=No+Image" class="card-img-top room-img" alt="No Image">
           {% endif %}
           <div class="card-body">
-            <h5 class="card-title">{{ room.room_number }} ({{ room.get_room_type_display }})</h5>
+            <h6 class="card-title">Room no.{{ room.room_number }} <br>  Room Type:({{ room.get_room_type_display }})</h6>
             <p class="card-text">Price: <span class="fw-bold text-primary">₹{{ room.price }}</span></p>
             <p>
               
@@ -251,11 +252,11 @@
 
 
             {% if not room.is_booked %}
-            <a href="{% url 'book_room' room.id %}" class="btn btn-success">Book Now</a>
+            <a href="{% url 'booking_list_create' room.id %}" class="btn btn-success">Book Now</a>
         {% else %}
             {% with active_booking=room.booking_set.last %}
                 {% if not active_booking or active_booking is None %}
-                    <a href="{% url 'book_room' room.id %}" class="btn btn-success">Book Now</a>
+                    <a href="{% url 'booking_list_create' room.id %}" class="btn btn-success">Book Now</a>
                 {% else %}
                     <span class="btn btn-danger disabled">Booked</span>
                 {% endif %}
@@ -308,18 +309,8 @@
   <h3>Leave a Review:</h3>
   <a href="{% url 'add_review' hotel.id %}" class="btn btn-success">Add a Review</a>
 
-
-  <!-- <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
-{% else %}
-  <p><a href="{% url 'login' %}?next={{ request.path }}">Login</a> to leave a review.</p>
-{% endif %}
-</div> -->
-
-
+  {% endif %}
+</div> 
 
 
 

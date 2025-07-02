@@ -9,7 +9,6 @@ class Booking(BaseMixin):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, blank=True)
     check_in = models.DateField()
     check_out = models.DateField()
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)  
     booking_mode = models.CharField(max_length=50, choices=PAY_MODE, blank=True, default='online')  
 
     def __str__(self): 

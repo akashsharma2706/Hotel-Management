@@ -1,7 +1,7 @@
 from django.db import models
 from user_auth.models import User
 import uuid
-from django.db.models import Q, Avg, Count
+from django.db.models import Q
 from django.core.validators import MaxValueValidator
 from .constants import ROOM_TYPE, FACILITY_CHOICES, LOCATION_CHOICES
 
@@ -37,19 +37,9 @@ class Hotel(BaseMixin):
     manager = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='hotel_manager')
     name = models.CharField(max_length=100)
     hotel_image = models.ImageField(upload_to='media')
-    address = models.CharField(max_length=255)
-    rating = models.IntegerField(validators=[MaxValueValidator(5)])
     location = models.CharField(max_length=50, choices=LOCATION_CHOICES, default='Dharamshala') 
     facilities = models.ManyToManyField(Facilities, blank=True, related_name='hotel_facilities')
     objects = HotelManager()
-
-    def average_rating(self):
-        avg = self.review.aggregate(avg_rating=Avg('star_rating'))['avg_rating']
-        return round(avg or 0, 1)
-
-    def total_review(self):
-        total_reviews_count = self.review.aggregate(reviews_count=Count('comment'))['reviews_count']
-        return total_reviews_count
 
     def __str__(self):
         return self.name

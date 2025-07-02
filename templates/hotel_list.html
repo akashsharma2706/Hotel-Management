@@ -216,11 +216,7 @@
                         {% for room in hotel.hotel_rooms.all|slice:":2" %}
                         <div class="room-badge">
                             {{ room.room_number }} - {{ room.get_room_type_display }} - ₹{{ room.price }}
-                            {% if not room.is_booked %}
-                                <span class="room-available">(Available)</span>
-                            {% else %}
-                                <span class="room-booked">(Booked)</span>
-                            {% endif %}
+                            
                         </div>
                         {% empty %}
                         <span class="text-muted">No rooms listed</span>

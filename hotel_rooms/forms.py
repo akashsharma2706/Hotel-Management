@@ -8,11 +8,11 @@ class HotelForm(forms.ModelForm):
         model = Hotel
         fields = "__all__"
        
-       
 class RoomForm(forms.ModelForm):
     class Meta:
         model = Room
         fields = ['room_number', 'room_type', 'room_image', 'price', 'is_booked']
+        
 
 
 class ReviewForm(forms.ModelForm):

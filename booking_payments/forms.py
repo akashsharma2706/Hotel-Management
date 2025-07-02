@@ -5,7 +5,7 @@ from .models import Booking ,Payment
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ['check_in', 'check_out', 'total_price']
+        fields = ['check_in', 'check_out']
         widgets = {
                 'check_in': forms.DateInput(attrs={'type': 'date'}),
                 'check_out': forms.DateInput(attrs={'type': 'date'}),

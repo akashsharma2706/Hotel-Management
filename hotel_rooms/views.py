@@ -3,8 +3,9 @@ from django.views.generic import ListView,DetailView,CreateView, UpdateView, Del
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import RoomForm, HotelForm, ReviewForm
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Avg
 
 
 class HotelListCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView, ListView):
@@ -38,6 +39,12 @@ class HotelDetailUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView,
     template_name = 'hotel_detail.html'
     fields ='__all__'
     success_message = "Hotel updated successfully"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        hotel = self.get_object()
+        context['avg_rating'] = hotel.reviews.aggregate(Avg('star_rating'))['star_rating__avg']
+        return context
 
     def get_success_url(self):
         return reverse('hotel_detail', kwargs={'pk': self.object.pk})
@@ -74,7 +81,7 @@ class RoomDetailUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView, 
     model = Room
     context_object_name = 'room'
     template_name = 'room_create.html'
-    fields = '__all__'
+    fields = ['room_number', 'room_type', 'room_image', 'price', 'is_booked']
     success_message = "Room updated successfully"
     
     def get_success_url(self):
