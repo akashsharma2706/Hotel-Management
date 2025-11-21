@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+{% for payment in payments %}
+yutyu
+<p>{{payment.user}}
+{{payment.booking}}
+{{payment.payment_mode}}
+{{payment.payment_type}}
+{{payment.payment_status}}</p>
+
+{% endfor %}
+
+
+{% endblock %}
